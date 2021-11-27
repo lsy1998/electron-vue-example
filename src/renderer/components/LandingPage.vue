@@ -1,20 +1,55 @@
 <template>
   <div id="wrapper">
-    <el-upload
-      drag
-      action="https://jsonplaceholder.typicode.com/posts/"
-      multiple
+    <div
+      style="
+        width: 100%;
+        min-height: 200px;
+        border: 1px solid rgb(220, 223, 230);
+        text-align: center;
+        line-height: 200px;
+        border-radius: 4px;
+        padding: 10px;
+        margin-bottom: 30px;
+      "
+      @drop.prevent="dropFile($event)"
+      @dragover.prevent="stopPropagation()"
+      id="dropBox"
     >
-      <i class="el-icon-upload"></i>
-      <div class="el-upload__text" style="width: 100%">
-        将文件拖到此处，或<em>点击上传</em>
-      </div>
-    </el-upload>
+      {{ placeholder }}
+      <el-row :gutter="12" v-show="showFileList">
+        <el-col
+          v-for="file in fileList"
+          :key="file.name"
+          :span="8"
+          style="margin-bottom: 10px"
+          @mouseover.native="showDeleteBtn(file.name, true)"
+          @mouseleave.native="showDeleteBtn(file.name, false)"
+        >
+          <el-card
+            :body-style="{ height: '40px', textAlign: 'left', padding: '10px' }"
+            shadow="always"
+          >
+            <label
+              v-ellipsis.middle
+              style="width: 80%; display: inline-block"
+              >{{ file.name }}</label
+            >
+            <i
+              :id="file.name"
+              class="el-icon-delete"
+              style="float: right; display: none"
+              @click="deleteFile(file.name)"
+            ></i>
+          </el-card>
+        </el-col>
+      </el-row>
+    </div>
 
     <el-input
       placeholder="请输入内容"
       v-model="destFilepath"
       class="input-with-select"
+      style="margin-bottom: 30px"
     >
       <el-button
         @click="selectFolder"
@@ -29,48 +64,72 @@
 <script>
 import service from "../../bridge/service/service";
 const { ipcRenderer } = require("electron");
-
+const fs = require("fs");
 export default {
   name: "landing-page",
   props: { msg: String },
   data() {
     return {
+      placeholder: "拖拽文件到此处",
       txt: "",
       destFilepath: "",
+      fileList: [],
+      showFileList: false,
     };
   },
   mounted() {
-    document.getElementsByClassName("el-upload")[0].style.width = "100%";
-    document.getElementsByClassName("el-upload-dragger")[0].style.width =
-      "100%";
     ipcRenderer.on("selectFolder-reply", (event, arg) => {
       console.log(arg);
       this.destFilepath = arg;
     });
   },
   methods: {
-    uploadSuccess(file, fileList) {
-      console.log(fileList);
-      // console.log(file)
+    stopPropagation() {},
+    deleteFile(filename) {
+      for (let i = 0; i < this.fileList.length; i++) {
+        if (this.fileList[i].name == filename) {
+          this.fileList.splice(i, 1);
+        }
+      }
     },
+    showDeleteBtn(id, flag) {
+      if (flag) {
+        document.getElementById(id).style.display = "inline-block";
+      } else {
+        document.getElementById(id).style.display = "none";
+      }
+    },
+    dropFile(e) {
+      this.fileList = [];
+      var files = e.dataTransfer.files;
+
+      for (let file of files) {
+        let temp = {
+          name: file.name,
+          path: file.path,
+        };
+
+        this.fileList.push(temp);
+        this.showFileList = true;
+        this.placeholder = "";
+        document.getElementById("dropBox").style.textAlign = "";
+        document.getElementById("dropBox").style.lineHeight = "";
+        console.log(temp);
+      }
+    },
+
     renameFile() {
       alert(111);
-      let files = document
-        .getElementsByClassName("el-upload-list")[0]
-        .getElementsByTagName("a");
-      let fileName = [];
+
       let data = {};
-      for (let i = 0; i < files.length; i++) {
-        fileName.push(files[i].innerText);
-      }
-      console.log(fileName);
-      if(this.destFilepath==''){
-        alert("Please select a destination")
-      }else{
+
+      if (this.destFilepath == "") {
+        alert("Please select a destination");
+      } else {
         data = {
-          "filenames":fileName,
-          "destFilepath":this.destFilepath
-        }
+          destFilepath: this.destFilepath,
+          fileList: this.fileList,
+        };
       }
       // 这里传入两个参数，并将返回结果赋值给txt，在div中显示出来
       // service.readTxt({ p1: "参数1", p2: "参数2" }, (resp) => {
@@ -80,6 +139,7 @@ export default {
       // ipcRenderer.on("asynchronous-reply", (event, arg) => {
       //   console.log(arg); // prints "pong"
       // });
+      console.log(data); // prints
       ipcRenderer.send("renameFile", data);
       // const { shell } = require("electron").remote;
       // shell.showItemInFolder(`C:\\Users\\nx017142\\jackson\\project\\example\\electronVueExample\\my-project\\`)
