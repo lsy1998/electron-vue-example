@@ -6,7 +6,8 @@ import 'element-ui/lib/theme-chalk/index.css';  //新添加
 import App from './App'
 import router from './router'
 import store from './store'
-
+import ellipsis from '@hyjiacan/vue-ellipsis'
+Vue.use(ellipsis)
 Vue.use(ElementUI);  
 
 if (!process.env.IS_WEB) Vue.use(require('vue-electron'))

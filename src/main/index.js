@@ -1,13 +1,14 @@
-import { app, BrowserWindow ,dialog} from "electron";
+import { app, BrowserWindow, dialog } from "electron";
 import "../renderer/store";
 const { ipcMain } = require("electron");
 const fs = require("fs");
 const path = require("path");
+const moment = require("moment");
 var filePath = path.resolve("../");
 //调用文件遍历方法
 
 //文件遍历方法
-function fileDisplay(sourceFilename,filePath) {
+function fileDisplay(sourceFile, filePath) {
   //根据文件路径读取文件，返回文件列表
   fs.readdir(filePath, function (err, files) {
     if (err) {
@@ -22,27 +23,31 @@ function fileDisplay(sourceFilename,filePath) {
           if (eror) {
             console.warn("获取文件stats失败");
           } else {
-            var isFile = stats.isFile(); //是文件
-            // var isDir = stats.isDirectory(); //是文件夹
+            var isFile = stats.isFile(); 
+
             if (isFile) {
-              // console.log(filedir);
-              // 读取文件内容
-              // var content = fs.readFileSync(filedir, "utf-8");
+
               console.log(filename);
-              if (filename == sourceFilename) {
-                let newPath = path.join(filePath,Date.now()+filename) ;
+              if (filename == sourceFile.name) {
+                let date = moment().format("YYYY-MM-DD_HH-mm-ss");
+                let newPath = path.join(filePath, filename.replace(path.extname(filename),"")+"_"+date+path.extname(filename));
                 fs.rename(filedir, newPath, (err) => {
                   // 重命名文件名称
                   if (!err) {
-                    console.log(filename + "改名成功" );
+                    console.log(filename + "改名成功");
+                    fs.copyFile(sourceFile.path, path.join(filePath,sourceFile.name), (err) => {
+                      if (err) {
+                        console.log(err);
+                      } else {
+                        console.log("copy file succeed");
+                      }
+                    });
                   }
                 });
               }
-              // console.log(filedir);
+
             }
-            // if(isDir){
-            //     fileDisplay(filedir);//递归，如果是文件夹，就继续遍历该文件夹下面的文件
-            // }
+
           }
         });
       });
@@ -51,11 +56,10 @@ function fileDisplay(sourceFilename,filePath) {
 }
 
 ipcMain.on("renameFile", (event, data) => {
-  
   console.log("a");
-  for(let filename of data.filenames){
-    console.log(filename);
-    fileDisplay(filename,data.destFilepath);
+  for (let i=0;i<data.fileList.length;i++) {
+    console.log(data.fileList[i]);
+    fileDisplay(data.fileList[i], data.destFilepath);
   }
   // event.sender.send("asynchronous-reply", "pong");
 });
@@ -80,14 +84,17 @@ ipcMain.on("copyFile", (event, arg) => {
 });
 
 ipcMain.on("selectFolder", (event, arg) => {
-  dialog
-    .showOpenDialog(mainWindow, {
+  dialog.showOpenDialog(
+    mainWindow,
+    {
       properties: ["openDirectory"],
-    },(result) => {
+    },
+    (result) => {
       console.log(result);
       console.log(result[0]);
-      event.sender.send("selectFolder-reply",result[0]);
-    });
+      event.sender.send("selectFolder-reply", result[0]);
+    }
+  );
 });
 /**
  * Set `__static` path to static files in production
