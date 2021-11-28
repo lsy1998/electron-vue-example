@@ -236,12 +236,12 @@ main > div {
   border-radius: 4px;
   padding: 10px;
   margin-bottom: 30px;
-  color:rgb(48, 49, 51);
+  color:rgb(99, 100, 104);
 }
 .el-icon-delete {
   float: right;
   display: none;
   position: relative;
-  bottom: 7px;
+  bottom: 5px;
 }
 </style>
