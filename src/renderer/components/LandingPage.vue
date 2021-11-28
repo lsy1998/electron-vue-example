@@ -142,7 +142,7 @@ export default {
 </script>
 
 <style>
-@import url("https://fonts.googleapis.com/css?family=Source+Sans+Pro");
+@import url("https://fonts.googleapis.com/css?family=Noto+Sans+SC");
 
 * {
   box-sizing: border-box;
@@ -151,7 +151,7 @@ export default {
 }
 
 body {
-  font-family: "Source Sans Pro", sans-serif;
+  font-family: Noto Sans SC;
 }
 
 #wrapper {
@@ -236,6 +236,7 @@ main > div {
   border-radius: 4px;
   padding: 10px;
   margin-bottom: 30px;
+  color:rgb(48, 49, 51);
 }
 .el-icon-delete {
   float: right;
