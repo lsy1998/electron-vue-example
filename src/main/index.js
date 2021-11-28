@@ -5,28 +5,22 @@ const fs = require("fs");
 const path = require("path");
 const moment = require("moment");
 var filePath = path.resolve("../");
-//调用文件遍历方法
+
 
 //文件遍历方法
 function fileDisplay(sourceFile, filePath) {
-  //根据文件路径读取文件，返回文件列表
   fs.readdir(filePath, function (err, files) {
     if (err) {
       console.warn(err);
     } else {
-      //遍历读取到的文件列表
       files.forEach(function (filename) {
-        //获取当前文件的绝对路径
         var filedir = path.join(filePath, filename);
-        //根据文件路径获取文件信息，返回一个fs.Stats对象
         fs.stat(filedir, function (eror, stats) {
           if (eror) {
             console.warn("获取文件stats失败");
           } else {
             var isFile = stats.isFile(); 
-
             if (isFile) {
-
               console.log(filename);
               if (filename == sourceFile.name) {
                 let date = moment().format("YYYY-MM-DD_HH-mm-ss");
@@ -45,9 +39,7 @@ function fileDisplay(sourceFile, filePath) {
                   }
                 });
               }
-
             }
-
           }
         });
       });
@@ -61,14 +53,7 @@ ipcMain.on("renameFile", (event, data) => {
     console.log(data.fileList[i]);
     fileDisplay(data.fileList[i], data.destFilepath);
   }
-  // event.sender.send("asynchronous-reply", "pong");
 });
-
-// ipcMain.on("renameFile", (event, arg) => {
-//   fileDisplay("../../");
-//   console.log("b");
-//   event.returnValue = "pong";
-// });
 
 ipcMain.on("copyFile", (event, arg) => {
   console.log("c");
@@ -96,10 +81,7 @@ ipcMain.on("selectFolder", (event, arg) => {
     }
   );
 });
-/**
- * Set `__static` path to static files in production
- * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html
- */
+
 if (process.env.NODE_ENV !== "development") {
   global.__static = require("path")
     .join(__dirname, "/static")
@@ -113,9 +95,7 @@ const winURL =
     : `file://${__dirname}/index.html`;
 
 function createWindow() {
-  /**
-   * Initial window options
-   */
+
   mainWindow = new BrowserWindow({
     height: 563,
     useContentSize: true,
@@ -142,23 +122,3 @@ app.on("activate", () => {
     createWindow();
   }
 });
-
-/**
- * Auto Updater
- *
- * Uncomment the following code below and install `electron-updater` to
- * support auto updating. Code Signing with a valid certificate is required.
- * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-electron-builder.html#auto-updating
- */
-
-/*
-import { autoUpdater } from 'electron-updater'
-
-autoUpdater.on('update-downloaded', () => {
-  autoUpdater.quitAndInstall()
-})
-
-app.on('ready', () => {
-  if (process.env.NODE_ENV === 'production') autoUpdater.checkForUpdates()
-})
- */

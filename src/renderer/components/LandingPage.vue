@@ -1,16 +1,6 @@
 <template>
   <div id="wrapper">
     <div
-      style="
-        width: 100%;
-        min-height: 200px;
-        border: 1px solid rgb(220, 223, 230);
-        text-align: center;
-        line-height: 200px;
-        border-radius: 4px;
-        padding: 10px;
-        margin-bottom: 30px;
-      "
       @drop.prevent="dropFile($event)"
       @dragover.prevent="stopPropagation()"
       id="dropBox"
@@ -26,7 +16,7 @@
           @mouseleave.native="showDeleteBtn(file.name, false)"
         >
           <el-card
-            :body-style="{ height: '40px', textAlign: 'left', padding: '10px' }"
+            :body-style="{ height: '40px', textAlign: 'left' }"
             shadow="always"
           >
             <label
@@ -34,12 +24,12 @@
               style="width: 80%; display: inline-block"
               >{{ file.name }}</label
             >
-            <i
+            <em
+              
               :id="file.name"
               class="el-icon-delete"
-              style="float: right; display: none"
               @click="deleteFile(file.name)"
-            ></i>
+            ></em>
           </el-card>
         </el-col>
       </el-row>
@@ -113,7 +103,7 @@ export default {
         this.showFileList = true;
         this.placeholder = "";
         document.getElementById("dropBox").style.textAlign = "";
-        document.getElementById("dropBox").style.lineHeight = "";
+        document.getElementById("dropBox").style.lineHeight = "0px";
         console.log(temp);
       }
     },
@@ -131,18 +121,9 @@ export default {
           fileList: this.fileList,
         };
       }
-      // 这里传入两个参数，并将返回结果赋值给txt，在div中显示出来
-      // service.readTxt({ p1: "参数1", p2: "参数2" }, (resp) => {
-      //   this.txt = resp;
-      // });
-      // service.test();
-      // ipcRenderer.on("asynchronous-reply", (event, arg) => {
-      //   console.log(arg); // prints "pong"
-      // });
+
       console.log(data); // prints
       ipcRenderer.send("renameFile", data);
-      // const { shell } = require("electron").remote;
-      // shell.showItemInFolder(`C:\\Users\\nx017142\\jackson\\project\\example\\electronVueExample\\my-project\\`)
     },
     copyFile() {
       let arg = {
@@ -244,5 +225,22 @@ main > div {
 .doc button.alt {
   color: #42b983;
   background-color: transparent;
+}
+
+#dropBox {
+  width: 100%;
+  min-height: 200px;
+  border: 1px solid rgb(220, 223, 230);
+  text-align: center;
+  line-height: 200px;
+  border-radius: 4px;
+  padding: 10px;
+  margin-bottom: 30px;
+}
+.el-icon-delete {
+  float: right;
+  display: none;
+  position: relative;
+  bottom: 7px;
 }
 </style>
