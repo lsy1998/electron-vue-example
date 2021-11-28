@@ -18,7 +18,7 @@
   },
   "build": {
     "asar": false,
-    "productName": "my-project",
+    "productName": "eform deploy helper",
     "appId": "com.example.yourapp",
     "directories": {
       "output": "build"
@@ -45,7 +45,15 @@
       "icon": "build/icons/icon.icns"
     },
     "win": {
-      "icon": "build/icons/icon.ico"
+      "icon": "build/icons/favicon.ico",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "ia32"
+          ]
+        }
+      ]
     },
     "linux": {
       "icon": "build/icons"
@@ -56,6 +64,7 @@
     "axios": "^0.18.0",
     "element-ui": "^2.15.6",
     "moment": "^2.29.1",
+    "multispinner": "^0.2.1",
     "vue": "^2.5.16",
     "vue-electron": "^1.0.6",
     "vue-router": "^3.0.1",
