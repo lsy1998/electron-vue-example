@@ -1,6 +1,7 @@
 <template>
   <div id="wrapper">
     <div
+      class="scrollbar scrollbar-1"
       @drop.prevent="dropFile($event)"
       @dragover.prevent="stopPropagation()"
       id="dropBox"
@@ -25,11 +26,42 @@
               >{{ file.name }}</label
             >
             <em
-              
               :id="file.name"
               class="el-icon-delete"
               @click="deleteFile(file.name)"
             ></em>
+          </el-card>
+        </el-col>
+      </el-row>
+    </div>
+
+    <div
+     class="scrollbar scrollbar-1"
+      id="successFileListBox"
+      v-show="successFileList.length == 0 ? false : true"
+    >
+      <el-row :gutter="12">
+        <el-col
+          v-for="file in successFileList"
+          :key="file.name"
+          :span="8"
+          style="margin-bottom: 10px"
+        >
+          <el-card
+            :body-style="{ height: '40px' }"
+            shadow="always"
+          >
+     
+            <div
+              v-ellipsis.middle
+              style="width:80%; text-align:left;display: inline-block;position:relative;bottom:10px"
+              >{{ file.name }}</div>
+              <em
+              :id="file.name"
+              class="el-icon-check"
+              @click="deleteFile(file.name)"
+            ></em>
+            
           </el-card>
         </el-col>
       </el-row>
@@ -64,6 +96,7 @@ export default {
       txt: "",
       destFilepath: "",
       fileList: [],
+      successFileList: [],
       showFileList: false,
     };
   },
@@ -71,6 +104,10 @@ export default {
     ipcRenderer.on("selectFolder-reply", (event, arg) => {
       console.log(arg);
       this.destFilepath = arg;
+    });
+    ipcRenderer.on("renameFile-reply", (event, arg) => {
+      console.log(arg);
+      this.successFileList.push(arg);
     });
   },
   methods: {
@@ -109,8 +146,6 @@ export default {
     },
 
     renameFile() {
-      alert(111);
-
       let data = {};
 
       if (this.destFilepath == "") {
@@ -236,7 +271,18 @@ main > div {
   border-radius: 4px;
   padding: 10px;
   margin-bottom: 30px;
-  color:rgb(99, 100, 104);
+  color: rgb(99, 100, 104);
+  overflow-y: scroll;
+}
+#successFileListBox {
+  width: 100%;
+  min-height: 100px;
+  border: 1px solid rgb(220, 223, 230);
+  border-radius: 4px;
+  padding: 10px;
+  margin-bottom: 30px;
+  color: rgb(99, 100, 104);
+  overflow-y: scroll;
 }
 .el-icon-delete {
   float: right;
@@ -244,4 +290,29 @@ main > div {
   position: relative;
   bottom: 5px;
 }
+.el-icon-check{
+  float: right;
+  position: relative;
+  bottom: 5px;
+  color:rgb(90, 201, 145);
+}
+.scrollbar {
+  overflow: auto;
+  margin  : 5px;
+  border  : none;
+  }
+  .scrollbar-1::-webkit-scrollbar {
+  width : 10px;  
+  height: 5px;
+  }
+  .scrollbar-1::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  box-shadow   : inset 0 0 5px rgba(0, 0, 0, 0.2);
+  background   : #b9b9b9;
+  }
+  .scrollbar-1::-webkit-scrollbar-track {
+  box-shadow   : inset 0 0 5px rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  background   : #ededed;
+  }
 </style>
