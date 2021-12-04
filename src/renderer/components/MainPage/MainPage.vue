@@ -1,34 +1,101 @@
 <template>
-  <div id="wrapper">
-    <el-tabs v-model="activeTab" @tab-click="handleClick">
-      <el-tab-pane label="主界面" name="mainPage">
-        <main-page></main-page>
-      </el-tab-pane>
-      <el-tab-pane label="部署记录" name="second">
-        <deploy-record-page ref="deployRecordPage"></deploy-record-page>
-      </el-tab-pane>
-     
-    </el-tabs>
+  <div>
+    <div
+      class="scrollbar scrollbar-1"
+      @drop.prevent="dropFile($event)"
+      @dragover.prevent="stopPropagation()"
+      id="dropBox"
+    >
+      {{ placeholder }}
+      <el-row :gutter="12" v-show="showFileList">
+        <el-col
+          v-for="file in fileList"
+          :key="file.name"
+          :span="8"
+          style="margin-bottom: 10px"
+          @mouseover.native="showDeleteBtn(file.name, true)"
+          @mouseleave.native="showDeleteBtn(file.name, false)"
+        >
+          <el-card
+            :body-style="{ height: '40px', textAlign: 'left' }"
+            shadow="always"
+          >
+            <label
+              v-ellipsis.middle
+              style="width: 80%; display: inline-block"
+              >{{ file.name }}</label
+            >
+            <em
+              :id="file.name"
+              class="el-icon-delete"
+              @click="deleteFile(file.name)"
+            ></em>
+          </el-card>
+        </el-col>
+      </el-row>
+    </div>
+
+    <div
+      class="scrollbar scrollbar-1"
+      id="successFileListBox"
+      v-show="successFileList.length == 0 ? false : true"
+    >
+      <el-row :gutter="12">
+        <el-col
+          v-for="file in successFileList"
+          :key="file.name"
+          :span="8"
+          style="margin-bottom: 10px"
+        >
+          <el-card :body-style="{ height: '40px' }" shadow="always">
+            <div
+              v-ellipsis.middle
+              style="
+                width: 80%;
+                text-align: left;
+                display: inline-block;
+                position: relative;
+                bottom: 10px;
+              "
+            >
+              {{ file.name }}
+            </div>
+            <em
+              :id="file.name"
+              class="el-icon-check"
+              @click="deleteFile(file.name)"
+            ></em>
+          </el-card>
+        </el-col>
+      </el-row>
+    </div>
+
+    <el-input
+      placeholder="请输入内容"
+      v-model="destFilepath"
+      class="input-with-select"
+      style="margin-bottom: 30px"
+    >
+      <el-button
+        @click="selectFolder"
+        slot="append"
+        icon="el-icon-folder-opened"
+      ></el-button>
+    </el-input>
+    <el-button @click="renameFile">提交</el-button>
   </div>
 </template>
 
 <script>
-import mainPage from "./MainPage/MainPage.vue";
-import deployRecordPage from "./DeployRecordPage/DeployRecordPage.vue";
-
-import service from "../../bridge/service/service";
 import { remote } from "electron";
-import * as DB from "../datastore";
+import * as DB from "../../datastore";
 const moment = require("moment");
 const { ipcRenderer } = require("electron");
 const fs = require("fs");
 export default {
-  name: "landing-page",
-  props: { msg: String },
-  components: { mainPage, deployRecordPage },
+  name: "mainPage",
   data() {
     return {
-      activeTab: "mainPage",
       placeholder: "拖拽文件到此处",
       txt: "",
       destFilepath: "",
@@ -38,7 +105,6 @@ export default {
     };
   },
   mounted() {
-    
     ipcRenderer.on("selectFolder-reply", (event, arg) => {
       console.log(arg);
       this.destFilepath = arg;
@@ -59,10 +125,6 @@ export default {
     });
   },
   methods: {
-    handleClick(tab, event){
-      console.log(tab)
-       this.$refs.deployRecordPage.$emit("reloadData");
-    },
     insertData() {
       console.log(remote.app.getPath("userData"));
       console.log("insert data");
@@ -272,3 +334,4 @@ main > div {
   background: #ededed;
 }
 </style>
+

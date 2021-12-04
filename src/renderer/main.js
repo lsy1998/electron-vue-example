@@ -7,12 +7,15 @@ import App from './App'
 import router from './router'
 import store from './store'
 import ellipsis from '@hyjiacan/vue-ellipsis'
+import {db} from './datastore'
+
 Vue.use(ellipsis)
 Vue.use(ElementUI);  
 
 if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
 Vue.http = Vue.prototype.$http = axios
 Vue.config.productionTip = false
+Vue.prototype.$db = db
 
 /* eslint-disable no-new */
 new Vue({

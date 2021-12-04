@@ -85,6 +85,7 @@ ipcMain.on("renameFile", (event, data) => {
       type: "info",
       title: "提示信息",
     });
+    event.sender.send("renameFile-allSucceeded", data.fileList);
   }
 });
 
