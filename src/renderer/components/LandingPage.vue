@@ -119,9 +119,9 @@ export default {
     copyFile() {
       let arg = {
         sourcePath:
-          "C:\\Users\\nx017142\\jackson\\project\\example\\electronVueExample\\my-project\\test\\test.js",
+          "C:\\Users\\nx017142\\jackson\\project\\example\\electronVueExample\\deploy helper\\test\\test.js",
         destPath:
-          "C:\\Users\\nx017142\\jackson\\project\\example\\electronVueExample\\my-project\\test1\\test.js",
+          "C:\\Users\\nx017142\\jackson\\project\\example\\electronVueExample\\deploy helper\\test1\\test.js",
       };
       ipcRenderer.send("copyFile", arg);
     },

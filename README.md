@@ -1,4 +1,4 @@
-# my-project
+# deploy helper
 
 > An electron-vue project
 

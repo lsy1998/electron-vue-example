@@ -70,19 +70,28 @@
       </el-row>
     </div>
 
-    <el-input
-      placeholder="请输入内容"
+    <el-select
       v-model="destFilepath"
-      class="input-with-select"
-      style="margin-bottom: 30px"
+      clearable
+      placeholder="请选择"
+      style="width: 90%"
     >
-      <el-button
-        @click="selectFolder"
-        slot="append"
-        icon="el-icon-folder-opened"
-      ></el-button>
-    </el-input>
-    <el-button @click="renameFile">提交</el-button>
+      <el-option
+        v-for="preSetPath in preSetPaths"
+        :key="preSetPath.id"
+        :label="preSetPath.label"
+        :value="preSetPath.value"
+      >
+      </el-option>
+    </el-select>
+    <el-button
+      @click="selectFolder"
+      slot="append"
+      icon="el-icon-folder-opened"
+      style="width: 9%"
+    ></el-button>
+
+    <div style="margin-top:30px;"><el-button @click="renameFile">提交</el-button></div>
   </div>
 </template>
 
@@ -96,6 +105,14 @@ export default {
   name: "mainPage",
   data() {
     return {
+      preSetPaths: [
+        {
+          id: 1,
+          label: "Eform 默认路径：\\\\cngua01ms086\\c$\\eform",
+          value: "\\\\cngua01ms086\\c$\\eform",
+        },
+        { id: 2, label: "QMS 默认路径：\\\\cngua01ms086\\c$\\eform", value: "\\\\cngua01ms086\\c$\\eform" },
+      ],
       placeholder: "拖拽文件到此处",
       txt: "",
       destFilepath: "",
@@ -181,9 +198,9 @@ export default {
     copyFile() {
       let arg = {
         sourcePath:
-          "C:\\Users\\nx017142\\jackson\\project\\example\\electronVueExample\\my-project\\test\\test.js",
+          "C:\\Users\\nx017142\\jackson\\project\\example\\electronVueExample\\deploy helper\\test\\test.js",
         destPath:
-          "C:\\Users\\nx017142\\jackson\\project\\example\\electronVueExample\\my-project\\test1\\test.js",
+          "C:\\Users\\nx017142\\jackson\\project\\example\\electronVueExample\\deploy helper\\test1\\test.js",
       };
       ipcRenderer.send("copyFile", arg);
     },
@@ -334,4 +351,3 @@ main > div {
   background: #ededed;
 }
 </style>
-
