@@ -35,3 +35,29 @@ export function findDeployRecord() {
       });
   });
 }
+
+export function insertProject(project) {
+  db.insert(project, function (err, newDoc) {
+    if (err) {
+      console.log(err);
+      return false;
+    }
+    console.log(project);
+    return true;
+  });
+}
+
+export function findAllProjects() {
+  console.log("findAllProjects");
+  return new Promise(function (resolve, reject) {
+    db.find({
+      tablename: "projects",
+    })
+      .sort({
+        date: -1,
+      })
+      .exec((err, ret) => {
+        resolve(ret);
+      });
+  });
+}

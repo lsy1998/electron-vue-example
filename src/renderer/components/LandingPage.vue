@@ -4,10 +4,15 @@
       <el-tab-pane label="主界面" name="mainPage">
         <main-page></main-page>
       </el-tab-pane>
-      <el-tab-pane label="部署记录" name="second">
+      <el-tab-pane label="部署记录" name="deployRecordPage">
         <deploy-record-page ref="deployRecordPage"></deploy-record-page>
       </el-tab-pane>
-     
+      <el-tab-pane label="新建项目" name="newProjectPage">
+        <new-project-page ref="newProjectPage"></new-project-page>
+      </el-tab-pane>
+      <el-tab-pane label="项目列表" name="projectListPage">
+        <project-list-page ref="projectListPage"></project-list-page>
+      </el-tab-pane>
     </el-tabs>
   </div>
 </template>
@@ -15,8 +20,8 @@
 <script>
 import mainPage from "./MainPage/MainPage.vue";
 import deployRecordPage from "./DeployRecordPage/DeployRecordPage.vue";
-
-import service from "../../bridge/service/service";
+import newProjectPage from "./NewProjectPage/NewProjectPage.vue";
+import projectListPage from "./ProjectListPage/ProjectListPage.vue";
 import { remote } from "electron";
 import * as DB from "../datastore";
 const moment = require("moment");
@@ -25,7 +30,7 @@ const fs = require("fs");
 export default {
   name: "landing-page",
   props: { msg: String },
-  components: { mainPage, deployRecordPage },
+  components: { mainPage, deployRecordPage, newProjectPage, projectListPage },
   data() {
     return {
       activeTab: "mainPage",
@@ -38,7 +43,6 @@ export default {
     };
   },
   mounted() {
-    
     ipcRenderer.on("selectFolder-reply", (event, arg) => {
       console.log(arg);
       this.destFilepath = arg;
@@ -59,9 +63,18 @@ export default {
     });
   },
   methods: {
-    handleClick(tab, event){
-      console.log(tab)
-       this.$refs.deployRecordPage.$emit("reloadData");
+    handleClick(tab, event) {
+      console.log(tab);
+      switch (tab.name) {
+        case "deployRecordPage":
+          this.$refs.deployRecordPage.$emit("reloadData");
+          break;
+        case "newProjectPage":
+          break;
+        case "projectListPage":
+          this.$refs.projectListPage.$emit("reloadProjectData");
+          break;
+      }
     },
     insertData() {
       console.log(remote.app.getPath("userData"));
@@ -146,12 +159,6 @@ body {
 }
 
 #wrapper {
-  background: radial-gradient(
-    ellipse at top left,
-    rgba(255, 255, 255, 1) 40%,
-    rgba(229, 229, 229, 0.9) 100%
-  );
-  height: 100vh;
   padding: 60px 80px;
   width: 100vw;
 }
